@@ -69,3 +69,4 @@ gem 'pry-rails'
 gem 'devise'
 #coincheck
 gem 'ruby_coincheck_client'
+gem 'httpclient'
