@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_29_042711) do
+ActiveRecord::Schema.define(version: 2019_09_30_035440) do
 
   create_table "bitcoins", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.decimal "price", precision: 11, scale: 5, null: false
-    t.datetime "date_time", null: false
+    t.timestamp "date_time", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
