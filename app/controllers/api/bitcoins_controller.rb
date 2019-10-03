@@ -3,4 +3,9 @@ class Api::BitcoinsController < ApplicationController
         bitcoin = Bitcoin.all
         @data = bitcoin.last(1) # 配列で渡ってる
     end
+
+    def show
+        bitcoin = Bitcoin.all
+        @data = bitcoin.last(4)
+    end
 end

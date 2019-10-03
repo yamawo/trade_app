@@ -8,5 +8,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :bitcoins, only: :index, defaults: { format: 'json'}
+    get 'bitcoins/init' => 'bitcoins#show', defaults: { format: 'json' }
+    get 'wallets' => 'wallets#index', defaults: { format: 'json' }
   end
 end

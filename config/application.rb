@@ -17,5 +17,6 @@ module TradeGame
     # the framework and any gems in your application.
     config.autoload_paths += %W(#{config.root}/lib)
     config.enable_dependency_loading = true
+    config.timezone = 'Tokyo'
   end
 end

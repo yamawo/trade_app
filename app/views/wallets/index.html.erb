@@ -4,29 +4,47 @@
             <li class="having_money">
                 所持金 : <%= @wallets.yen %> 円
             </li>
+            <li class="having_bitcoin">
+                所持コイン : <%= @wallets.bitcoin %> BTC
+            </li>
             <li class="user_name">
                 <%= current_user.name %>
             </li>
         </ul>
     </header>
     <div class="container">
-        <canvas id="bitcoin_chart"></canvas>
+        <canvas id="bitcoin_chart" style="margin: 0 auto;"></canvas>
     </div>
     <footer class="footer">
+        <input id="btc" style="text-align: right;">BTC 
+        <button id="sell_button" onclick="selling()">sell</button>
+        <input id="yen" style="text-align: right;">円
+        <button id="buy_button">buy</button>
     </footer>
 </div>
 
 <%# ここからJS %>
 
 
-<%= javascript_pack_tag 'hello_vue' %>
+
 <script>
-    var ctx = document.getElementById("bitcoin_chart").getContext('2d');
+    var initData = [];
+    // var xhr = new XMLHttpRequest();
+    //     xhr.open('GET', "/api/bitcoins/init");
+    //     xhr.onload = function () {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             let data =  JSON.parse(xhr.responseText);
+    //             console.log(data);
+    //             for(let i = 0; i < data.length; i++) {
+    //                 initData.push({x: new Date(data[i].date_time), y: data[i].price});
+    //             }
+    //         }
+            var ctx = document.getElementById("bitcoin_chart").getContext('2d');
     var chart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
-                data: [],
+                data: initData,
                 label: 'Price Rating',            // ラベル        
                 borderColor: 'rgb(255, 99, 132)', // 線の色
                 backgroundColor: 'rgba(255, 99, 132, 0.5)', // 塗りの色
@@ -41,12 +59,15 @@
             },
             scales: {
                 xAxes: [{
-                    type: 'realtime' // X軸に沿ってスクロール
+                    type: 'realtime', // X軸に沿ってスクロール
                 }]
             },
             plugins: {
                 streaming: {
                     duration: 480000, // 480000ミリ秒（8分）のデータを表示
+                    refresh: 10000,
+                    pause: false,
+                    ttl: undefined,
                     onRefresh: function(chart) {
                         // request data so that it can be received in a callback function
                         var xhr = new XMLHttpRequest();
@@ -58,12 +79,13 @@
                                 let data =  JSON.parse(xhr.responseText);
 
                                 // append the new data array to the existing chart data
-
-                                Array.prototype.push.apply(chart.data.datasets[0].data, {x: new Date(), y:data.price});
-console.log(chart.data.datasets);                                // update chart datasets keeping the current animation
-                                chart.update({
-                                    preservation: true
-                                });
+                                chart.data.datasets[0].data.push({x: new Date(), y: data.price})
+                                
+                      console.log(chart.data.datasets);   
+                      
+                                
+                                // update chart datasets keeping the current animation
+                                
                             }
                         };
                         xhr.send();
@@ -72,4 +94,39 @@ console.log(chart.data.datasets);                                // update chart
             }
         }
     });
+        // };
+        // xhr.send();
+    
+        var btc_data = new XMLHttpRequest();
+        btc_data.open('GET', "/api/wallets");
+        btc_data.onload = function() {
+            if (btc_data.readyState === 4 && btc_data.status === 200) {
+                var degree = JSON.parse(this.responseText);
+            }
+                document.getElementById("btc").value = degree["bitcoin"];
+                document.getElementById("yen").value = degree["yen"];
+                }
+                    function selling(){
+                        if(document.getElementById("btc").value > 0){
+                            var sold_coin = document.getElementById("btc").value - 1
+                            document.getElementById("btc").value = sold_coin
+                            
+                            var having_yen = document.getElementById("yen").value
+                    
+                            var xhr_2 = new XMLHttpRequest();
+                            xhr_2.open('GET', "/api/bitcoins");
+                            xhr_2.onload = function() {
+                                if (xhr_2.readyState === 4 && xhr_2.status === 200) {
+                                    var current_coin_rate = JSON.parse(xhr_2.responseText);
+                                    console.log(current_coin_rate);
+                                    var add_yen = having_yen + current_coin_rate
+                                }
+                            }
+                        }
+                    }
+        btc_data.send();
+    
+    // document.getElementById("sell_button").onclick = function() {
+        
+    // }
 </script>

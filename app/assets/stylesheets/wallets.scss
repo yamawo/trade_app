@@ -17,6 +17,10 @@ html, body {
                 float: left;
                 padding: 30px 40px;
             }
+            .having_bitcoin {
+                float:left;
+                padding: 30px 40px;
+            }
             .user_name {
                 float: right;
                 padding: 30px 40px;
@@ -25,7 +29,7 @@ html, body {
     }
     .container {
         width: 100%;
-        height: calc(100vh - 280px);
+        height: 100%;
     }
     .footer {
         width: 100%;
