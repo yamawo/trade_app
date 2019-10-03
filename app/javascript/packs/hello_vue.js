@@ -1,72 +1,68 @@
-/* eslint no-console: 0 */
-// Run this example by adding <%= javascript_pack_tag 'hello_vue' %> (and
-// <%= stylesheet_pack_tag 'hello_vue' %> if you have styles in your component)
-// to the head of your layout file,
-// like app/views/layouts/application.html.erb.
-// All it does is render <div>Hello Vue</div> at the bottom of the page.
 
-import Vue from 'vue'
-import App from '../app.vue'
-
-document.addEventListener('DOMContentLoaded', () => {
-  const app = new Vue({
-    render: h => h(App)
-  }).$mount()
-  document.body.appendChild(app.$el)
-
-  console.log(app)
-})
-
-
-// The above code uses Vue without the compiler, which means you cannot
-// use Vue to target elements in your existing html templates. You would
-// need to always use single file components.
-// To be able to target elements in your existing html/erb templates,
-// comment out the above code and uncomment the below
-// Add <%= javascript_pack_tag 'hello_vue' %> to your layout
-// Then add this markup to your html template:
-//
-// <div id='hello'>
-//   {{message}}
-//   <app></app>
-// </div>
-
-
-// import Vue from 'vue/dist/vue.esm'
 // import App from '../app.vue'
-//
+
 // document.addEventListener('DOMContentLoaded', () => {
-//   const app = new Vue({
-//     el: '#hello',
+  //   const app = new Vue({
+    //     render: h => h(App)
+    //   }).$mount()
+    //   document.body.appendChild(app.$el)
+    
+    //   console.log(app)
+    // })
+import Vue from 'vue'
+import axios from 'axios'
+
+    
+var CoinCheck = [];
+
+new Vue({
+  el: "#bitcoin_chart",
+  data: {
+    data: [],
+  },
+  methods: {
+    window:onload = function() {
+      axios.get("/api/bitcoins")
+      .then(res => {
+        this.data = res.data; 
+        CoinCheck.push({                      // ハッシュを配列へ
+          x: data["date_time"],               // タイムスタンプ
+          y: data["price"]                    // レート（日本円）
+        });
+        console.log(CoinCheck);               // データ確認用
+      });
+      this.setInterval(this, 100000);         // 1分ごとにjsonでデータ取得する
+    },
+  }
+})
+// var id = 'bitcoin_chart';
+// var ctx = document.getElementById(id).getContext('2d');
+// var chart = new Chart(ctx, {
+//     type: 'line',
 //     data: {
-//       message: "Can you say hello?"
+//         datasets: [{
+//             data: CoinCheck,
+//             label: 'Price Rating',            // ラベル        
+//             borderColor: 'rgb(255, 99, 132)', // 線の色
+//             backgroundColor: 'rgba(255, 99, 132, 0.5)', // 塗りの色
+//             fill: false,                      // 塗りつぶさない
+//             lineTension: 0                    // グラフの丸み
+//         }]
 //     },
-//     components: { App }
-//   })
-// })
-//
-//
-//
-// If the project is using turbolinks, install 'vue-turbolinks':
-//
-// yarn add vue-turbolinks
-//
-// Then uncomment the code block below:
-//
-// import TurbolinksAdapter from 'vue-turbolinks'
-// import Vue from 'vue/dist/vue.esm'
-// import App from '../app.vue'
-//
-// Vue.use(TurbolinksAdapter)
-//
-// document.addEventListener('turbolinks:load', () => {
-//   const app = new Vue({
-//     el: '#hello',
-//     data: () => {
-//       return {
-//         message: "Can you say hello?"
+//     options: {
+//       title: {
+//           text: 'BTC/JPY (' + id + ')', // チャートタイトル
+//           display: true
+//       },
+//       scales: {
+//           xAxes: [{
+//               type: 'realtime' // X軸に沿ってスクロール
+//           }]
+//       },
+//       plugins: {
+//           streaming: {
+//             duration: 480000, // 480000ミリ秒（8分）のデータを表示
+//           }
 //       }
-//     },
-//     components: { App }
-//   })
+//     }
 // })

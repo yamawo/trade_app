@@ -1,72 +1,75 @@
-<%# <canvas id="CoinCheck"></canvas>
+<div id="wrapper">
+    <header class="header">
+        <ul>
+            <li class="having_money">
+                所持金 : <%= @wallets.yen %> 円
+            </li>
+            <li class="user_name">
+                <%= current_user.name %>
+            </li>
+        </ul>
+    </header>
+    <div class="container">
+        <canvas id="bitcoin_chart"></canvas>
+    </div>
+    <footer class="footer">
+    </footer>
+</div>
+
+<%# ここからJS %>
+
+
 <script>
-var buf = {};
-buf['CoinCheck'] = [[], []];
-var ws = new WebSocket('wss://ws-api.coincheck.com/');
-ws.onopen = function() {
-    ws.send(JSON.stringify({        // 購読リクエストを送信
-        "type": "subscribe",
-        "channel": "btc_jpy-trades"
-    }));
-};
-ws.onmessage = function(msg) { // メッセージ更新時のコールバック
-    var response = JSON.parse(msg.data);
-    buf['CoinCheck'][response[4] === 'buy' ? 0 : 1].push({
-        x: Date.now(), // タイムスタンプ（ミリ秒）
-        y: response[2] // 価格（日本円）
-    });
-}
-
-
-var id = 'CoinCheck';
-var ctx = document.getElementById(id).getContext('2d');
-var chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        datasets: [{
-            data: [],
-            label: 'Buy',                     // 買い取引データ
-            borderColor: 'rgb(255, 99, 132)', // 線の色
-            backgroundColor: 'rgba(255, 99, 132, 0.5)', // 塗りの色
-            fill: false,                      // 塗りつぶさない
-            lineTension: 0                    // 直線
-        }, {
-            data: [],
-            label: 'Sell',                    // 売り取引データ
-            borderColor: 'rgb(54, 162, 235)', // 線の色
-            backgroundColor: 'rgba(54, 162, 235, 0.5)', // 塗りの色
-            fill: false,                      // 塗りつぶさない
-            lineTension: 0                    // 直線
-        }]
-    },
-    options: {
-        title: {
-            text: 'BTC/JPY (' + id + ')', // チャートタイトル
-            display: true
-        },
-        scales: {
-            xAxes: [{
-                type: 'realtime' // X軸に沿ってスクロール
+    var ctx = document.getElementById("bitcoin_chart").getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                data: [],
+                label: 'Price Rating',            // ラベル        
+                borderColor: 'rgb(255, 99, 132)', // 線の色
+                backgroundColor: 'rgba(255, 99, 132, 0.5)', // 塗りの色
+                fill: false,                      // 塗りつぶさない
+                lineTension: 0                    // グラフの丸み
             }]
         },
-        plugins: {
-            streaming: {
-                duration: 300000, // 300000ミリ秒（5分）のデータを表示
-                onRefresh: function(chart) { // データ更新用コールバック
-                    Array.prototype.push.apply(
-                        chart.data.datasets[0].data, buf[id][0]
-                    );            // 買い取引データをチャートに追加
-                    Array.prototype.push.apply(
-                        chart.data.datasets[1].data, buf[id][1]
-                    );            // 売り取引データをチャートに追加
-                    buf[id] = [[], []]; // バッファをクリア
+        options: {
+            title: {
+                text: 'BTC/JPY (' + coincheck + ')', // チャートタイトル
+                display: true
+            },
+            scales: {
+                xAxes: [{
+                    type: 'realtime' // X軸に沿ってスクロール
+                }]
+            },
+            plugins: {
+                streaming: {
+                    duration: 480000, // 480000ミリ秒（8分）のデータを表示
+                    onRefresh: function(chart) {
+                        // request data so that it can be received in a callback function
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', "/api/bitcoins");
+                        xhr.onload = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+
+                                // assume the response is an array of {x: timestamp, y: value} objects
+                                var data = data;
+
+                                // append the new data array to the existing chart data
+                                Array.prototype.push.apply(chart.data.datasets[0].data, data);
+
+                                // update chart datasets keeping the current animation
+                                chart.update({
+                                    preservation: true
+                                });
+                            }
+                        };
+                        xhr.send();
+                    }
                 }
             }
         }
-    }
-});
-</script> %>
-
-
-<%# 上のコードはWebSocketAPIで取得したレート %>
-
+    });
+</script>
+<%= javascript_pack_tag 'hello_vue' %>
