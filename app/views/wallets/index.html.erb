@@ -19,8 +19,9 @@
 <%# ここからJS %>
 
 
+<%= javascript_pack_tag 'hello_vue' %>
 <script>
-    var ctx = document.getElementById("bitcoin_chart").getContext('2d');
+    var ctx = document.getElementById("bitcoin_chart").getContext('2d');
     var chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -35,7 +36,7 @@
         },
         options: {
             title: {
-                text: 'BTC/JPY (' + coincheck + ')', // チャートタイトル
+                text: 'BTC/JPY (coincheck)', // チャートタイトル
                 display: true
             },
             scales: {
@@ -54,12 +55,12 @@
                             if (xhr.readyState === 4 && xhr.status === 200) {
 
                                 // assume the response is an array of {x: timestamp, y: value} objects
-                                var data = data;
+                                let data =  JSON.parse(xhr.responseText);
 
                                 // append the new data array to the existing chart data
-                                Array.prototype.push.apply(chart.data.datasets[0].data, data);
 
-                                // update chart datasets keeping the current animation
+                                Array.prototype.push.apply(chart.data.datasets[0].data, {x: new Date(), y:data.price});
+console.log(chart.data.datasets);                                // update chart datasets keeping the current animation
                                 chart.update({
                                     preservation: true
                                 });
@@ -72,4 +73,3 @@
         }
     });
 </script>
-<%= javascript_pack_tag 'hello_vue' %>

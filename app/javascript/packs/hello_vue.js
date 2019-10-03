@@ -9,7 +9,7 @@
     
     //   console.log(app)
     // })
-import Vue from 'vue'
+import Vue from 'vue/dist/vue.esm.js'
 import axios from 'axios'
 
     
@@ -26,7 +26,7 @@ new Vue({
       .then(res => {
         this.data = res.data; 
         CoinCheck.push({                      // ハッシュを配列へ
-          x: data["date_time"],               // タイムスタンプ
+          x: new Date(),               // タイムスタンプ
           y: data["price"]                    // レート（日本円）
         });
         console.log(CoinCheck);               // データ確認用
