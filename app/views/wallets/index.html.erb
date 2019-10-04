@@ -19,7 +19,7 @@
         <input id="btc" style="text-align: right;">BTC 
         <button id="sell_button" onclick="selling()">sell</button>
         <input id="yen" style="text-align: right;">円
-        <button id="buy_button">buy</button>
+        <button id="buy_button"onclick="buying()">buy</button>
     </footer>
 </div>
 
@@ -108,22 +108,31 @@
                 }
                     function selling(){
                         if(document.getElementById("btc").value > 0){
-                            var sold_coin = document.getElementById("btc").value - 1
-                            document.getElementById("btc").value = sold_coin
-                            
-                            var having_yen = document.getElementById("yen").value
-                    
-                            var xhr_2 = new XMLHttpRequest();
-                            xhr_2.open('GET', "/api/bitcoins");
-                            xhr_2.onload = function() {
-                                if (xhr_2.readyState === 4 && xhr_2.status === 200) {
-                                    var current_coin_rate = JSON.parse(xhr_2.responseText);
-                                    console.log(current_coin_rate);
-                                    var add_yen = having_yen + current_coin_rate
+                            var money_data = new XMLHttpRequest();
+                                money_data.open('GET', "/api/wallets/sell");
+                                money_data.onload = function() {
+                                    if (money_data.readyState === 4 && money_data.status === 200) {
+                                        var new_degree = JSON.parse(this.responseText);
+                                    }
+                                             
                                 }
-                            }
                         }
+                        money_data.send();
                     }
+                    function buying(){
+                        if(document.getElementById("yen").value > 0){
+                            var jpy_data = new XMLHttpRequest();
+                                jpy_data.open('GET', "/api/wallets/buy");
+                                jpy_data.onload = function() {
+                                    if (jpy_data.readyState === 4 && jpy_data.status === 200) {
+                                        var jpy_degree = JSON.parse(this.responseText);
+                                    }
+                                             
+                                }
+                        }
+                        jpy_data.send();
+                    }
+
         btc_data.send();
     
     // document.getElementById("sell_button").onclick = function() {

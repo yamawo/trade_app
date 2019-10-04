@@ -10,5 +10,7 @@ Rails.application.routes.draw do
     resources :bitcoins, only: :index, defaults: { format: 'json'}
     get 'bitcoins/init' => 'bitcoins#show', defaults: { format: 'json' }
     get 'wallets' => 'wallets#index', defaults: { format: 'json' }
+    get 'wallets/sell' => 'wallets#show', defaults: { format: 'json' }
+    get 'wallets/buy' => 'wallets#new', defaults: { format: 'json' }
   end
 end
