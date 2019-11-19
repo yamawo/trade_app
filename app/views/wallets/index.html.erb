@@ -29,6 +29,8 @@
 
 <script>
     var initData = [];
+    // TODO 必要かどうか考え直す
+    
     // var xhr = new XMLHttpRequest();
     //     xhr.open('GET', "/api/bitcoins/init");
     //     xhr.onload = function () {
@@ -39,6 +41,7 @@
     //                 initData.push({x: new Date(data[i].date_time), y: data[i].price});
     //             }
     //         }
+
             var ctx = document.getElementById("bitcoin_chart").getContext('2d');
     var chart = new Chart(ctx, {
         type: 'line',
@@ -69,22 +72,17 @@
                     pause: false,
                     ttl: undefined,
                     onRefresh: function(chart) {
-                        // request data so that it can be received in a callback function
+                        // コールバック関数で受信できるようにデータを要求
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', "/api/bitcoins");
                         xhr.onload = function () {
                             if (xhr.readyState === 4 && xhr.status === 200) {
 
-                                // assume the response is an array of {x: timestamp, y: value} objects
+                                // {x: timestamp, y: value} オブジェクト
                                 let data =  JSON.parse(xhr.responseText);
 
-                                // append the new data array to the existing chart data
+                                // 新しいデータを既存のデータ配列に追加
                                 chart.data.datasets[0].data.push({x: new Date(), y: data.price})
-                                
-                      console.log(chart.data.datasets);   
-                      
-                                
-                                // update chart datasets keeping the current animation
                                 
                             }
                         };
@@ -113,8 +111,7 @@
                                 money_data.onload = function() {
                                     if (money_data.readyState === 4 && money_data.status === 200) {
                                         var new_degree = JSON.parse(this.responseText);
-                                    }
-                                             
+                                    }       
                                 }
                         }
                         money_data.send();
@@ -126,8 +123,7 @@
                                 jpy_data.onload = function() {
                                     if (jpy_data.readyState === 4 && jpy_data.status === 200) {
                                         var jpy_degree = JSON.parse(this.responseText);
-                                    }
-                                             
+                                    }        
                                 }
                         }
                         jpy_data.send();
@@ -135,7 +131,5 @@
 
         btc_data.send();
     
-    // document.getElementById("sell_button").onclick = function() {
-        
-    // }
+    
 </script>

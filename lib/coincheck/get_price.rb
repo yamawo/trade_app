@@ -1,4 +1,4 @@
-# https://coincheck.com/api/ticker　にrequest投げる
+# https://coincheck.com/api/ticker にrequest投げる
 # 欲しいものはlastとtimestampのみ
 require 'httpclient'
 require 'json'
